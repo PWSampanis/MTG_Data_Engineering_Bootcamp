@@ -1,2 +1,3 @@
 # ignore ALL .json files
 *.json
+!oracle-cards-3rows.json
