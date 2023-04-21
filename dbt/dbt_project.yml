@@ -34,5 +34,9 @@ clean-targets:         # directories to be removed by `dbt clean`
 models:
   MTG_Project:
     # Applies to all files under models/example/
-    example:
+    raw:
+      materialized: view    
+    staging:
       materialized: view
+    governed:
+      materialized: table
