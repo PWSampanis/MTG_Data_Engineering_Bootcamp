@@ -34,3 +34,17 @@ If I do a DBT external table I would need to use the dbt external_tables package
 - 2 service accounts - dbt and prefect (could you use one for both?)
 
 - GCS bucket creation, bigquery dataset creation (I think dbt external table will build the table). It will all rely on the autodetect schema though unless I build the schema into the dbt external table?
+
+
+commands I'm running when I restart my vm:
+- conda activate zoomcamp (my personal environment)
+- prefect orion start
+- cd prefect/
+
+To run the python file directly: 
+- python prefect_deployable_file.py
+*Note: you might need to add in your GCP blocks first and activate them with prefect.....*
+
+To build the deployment: 
+- prefect deployment build prefect_deployable_file.py:etl_api_to_gcs_to_bq -n "MTG ELT flow"
+Note: this will build a yaml file called
