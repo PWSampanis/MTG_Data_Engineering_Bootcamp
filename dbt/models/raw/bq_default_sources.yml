@@ -1,0 +1,47 @@
+version: 2
+## generated with command: dbt run-operation generate_source --args '{"schema_name": "mtg_testing", "database_name": "zoomcamp-2023", "table_names":["mtg_data_raw"], "generate_columns": "True", "include_descriptions": "True"}'
+sources:
+  - name: mtg_testing
+    description: "This table is created by querying the Scryfall API for a bulk export of the Oracle Cards database"
+    tables:
+      - name: mtg_data_raw
+        description: "Oracle Card API will try to give the newest version for each card in the database"
+        columns:
+          - name: id
+            description: ""
+          - name: name
+            description: ""
+          - name: mana_cost
+            description: ""
+          - name: cmc
+            description: ""
+          - name: type_line
+            description: ""
+          - name: oracle_text
+            description: ""
+          - name: power
+            description: ""
+          - name: toughness
+            description: ""
+          - name: loyalty
+            description: ""
+          - name: set
+            description: ""
+          - name: set_name
+            description: ""
+          - name: rarity
+            description: ""
+          - name: artist
+            description: ""
+          - name: collector_number
+            description: ""
+          - name: color_identity
+            description: ""
+          - name: prices.usd
+            description: ""
+          - name: prices.usd_foil
+            description: ""
+          - name: prices.image_uris.normal
+            description: ""
+          - name: released_at
+            description: "Ths is our date field. This field will be used in the governed model for partitoning. If the date is null, it will use date '2049-01-01', a reference to Bladerunner 2049, to avoid breaking the partition clause."
