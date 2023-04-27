@@ -37,3 +37,11 @@ sources:
             description: ""
           - name: color_identity
             description: ""
+          - name: prices.usd
+            description: ""
+          - name: prices.usd_foil
+            description: ""
+          - name: prices.image_uris.normal
+            description: ""
+          - name: released_at
+            description: "Ths is our date field. This field will be used in the governed model for partitoning. If the date is null, it will use date '2049-01-01', a reference to Bladerunner 2049, to avoid breaking the partition clause."
