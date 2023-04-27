@@ -72,10 +72,6 @@ to be able to use blocks in your code you need to run this from the cli:
 If I do a DBT external table I would need to use the dbt external_tables package. 
 - The user would need to run dbt deps to be able to initialize the repo
 
-## Infrastructure setup:
-
-
-
 commands I'm running when I restart my vm:
 - conda activate zoomcamp (my personal environment)
 - prefect orion start
