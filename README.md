@@ -1,25 +1,46 @@
-Okay, so is this a good place to start building my project?
+## Introduction:
+Hello and welcome to my project! The goal of this project is to bring Magic The Gathering card data into BigQuery for analysis. 
 
-First I'll want to test pulling data from the scryfall API with Python. I could try the bulk-data file in either JSON or CSV for an initial test. 
+The raw data will be accessed via the Scryfall API, an open API which has bulk data available. 
+For this project we will be pulling the oracle_cards bulk data file as it attempts to provide the most up to date version of every card printed. 
+If a card has been printed in many different editions it will only show up once (unless it is also a token card type).
+Information about the bulk data api can be found here: https://scryfall.com/docs/api/bulk-data
 
-Also I assume I need to make the DE_Zoomcamp_Project a github repo of its own so I can host the whole project publicly. 
+## Prerequisites:
+Google Cloud Project
+Virtual Machine / Working environment (video walkthrough linked below)
+Anaconda
+dbt cloud account
+prefect (installed through pip install requirements.txt)
 
-Will I need a python instance and requirements.txt in this project folder or use docker to preinstall all the required files?
-- I have anaconda installed in a different folder at the same level, is that an issue?
 
 
-It looks like I'm currently using Anaconda (2 versions... base and zoomcamp). There is also a pyhon 3.8 version available
+My suggestion is that you follow this helpful video which will walk you through the creation of a VM. The video will also walk you through installing anaconda which is used here (watch everything up until 16:35 timestamp).
+VM creation Video: https://youtu.be/ae-CV2KfoN0
 
-## Bulk Data:
-https://scryfall.com/docs/api/bulk-data/all
-so if I use the requests library to pull https://api.scryfall.com/bulk-data I should have 5 gzipped files... 
-1)"type": "oracle_cards"
-2) "type": "unique_artwork"
-3) "type": "default_cards"
-4) "type": "all_cards"
-5) "type": "rulings"
 
-I could try and load these into Cloud Storage as ndjson files. I would need to unzip them (can be done in jupyter notebooks, should also be possible in python). I would then load them into BQ tables. This whole process would run once a day
+## Initial Setup: 
+So at this point I am assuming that you have a working environment with Anaconda 3 installed and initialized. Next you will need to copy the project repository to your working environment.
+
+via the command line, you can run:
+git clone https://github.com/PWSampanis/MTG_Data_Engineering_Bootcamp.git
+
+I would then use the terminal to go into the MTG_Data_Engineering bootcamp and into the Prefect folder.
+
+linux VM command:
+cd MTG_Data_Engineering_Bootcamp/prefect
+
+From here, you can run pip install 
+
+
+
+
+
+
+
+
+
+
 
 
 When using prefect, you run the command *?prefect orion start?* to start up the web application and see progress of jobs. 
@@ -47,4 +68,64 @@ To run the python file directly:
 
 To build the deployment: 
 - prefect deployment build prefect_deployable_file.py:etl_api_to_gcs_to_bq -n "MTG ELT flow"
-Note: this will build a yaml file called
+Note: this will create a yaml file called etl_api_to_gcs_to_bq-deployment.yaml
+
+Open up the newly created yaml file and replace the line:
+parameters: {}
+
+With:
+parameters: {"bulk_data_url":"https://api.scryfall.com/bulk-data/oracle-cards"}
+
+save the yaml file then run the command:
+- prefect deployment apply etl_api_to_gcs_to_bq-deployment.yaml 
+
+This will create the deployment in the Prefect web UI, accessible via the url generated when you use the prefect deployment apply command or when you activate orion. 
+
+For a one off run: Open the deployement tab in the Prefect UI and open up the newly created deployment (MTG ELT flow v2 in this example). You have two choices:
+
+For a one time run, you can just hit the run button and do a quick run. 
+
+For a scheduled run, select Schedule and input your preferred data refresh shedule. 
+
+Either option will send this job to the default queue for an agent to run (the agent will be created in the next step).
+
+Back in te command line, run the command:
+- prefect agent start --work-queue "default"
+
+This agent will run the pending job that's in the deployments queue. 
+
+## Personal note: I've built out the yaml myself so hopefully the end user doesn't need to run the prefect deployment commands... right? 
+# Or maybe they just need to run the prefect deployment apply command because the file is already built. Would still have to start agent also
+
+## dbt
+For this section we will assume that you have already run the prefect_deployable_file.py script either through the command line (python prefect_deployable_file.py) or by setting up a deployment and submitting a job from the Prefect web UI to an active agent for completion. 
+
+This run should have populated a table in BigQuery based on your settings. 
+The BQ dataset and table names were assigned in the python script, default was table_name='mtg_testing.mtg_data_raw'. note that this is table_name={dataset}.{table} so the BQ dataset is mtg_testing and the table name is mtg_data_raw. 
+
+We are now going to go into dbt cloud and set up a new project. You will select the dbt folder in this project's github repo for dbt's folder structure
+
+You can connect dbt to the GitHub dbt folder within this repo so you can pull down all of the transformations I've built. This should allow you to run the models. 
+
+In the dbt cloud UI, you can go to the command line and run:
+dbt deps
+
+This command will ensure that you have any pre-requisite dbt packages.
+
+Next, from the cloud UI, run:
+dbt run
+
+This will build out a staging table called stg_mtg_data and a final table called MTG_Cards_Final. It will require the dataset name to be mtg_testing and the table name as mtg_data raw. If you change these variables you will need to adjuts the models/raw/bq_default_sources.yml file accordingly.
+
+## Partitioning Note
+The final table, MTG_Cards_Final is partitioned by day on the release_date field. Queries within BQ or in Data Studio can include this as a date filter to significantly reduce computational costs.
+
+## Looker Studio (Reporting):
+Next, go to the dashboard at .....
+Make a copy of the report. When you do, change the Data Source to...
+make sure all of the charts are working!
+Note: I've made a formula field to bring full images into my Data Studio report. This isn't required but allows for nicer presentation. To create the formula, you do:
+..
+
+You should now have a working dashboard based on ScryFall's MTG API!
+

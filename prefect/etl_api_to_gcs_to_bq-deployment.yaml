@@ -1,0 +1,41 @@
+###
+### A complete description of a Prefect Deployment for flow 'etl-api-to-gcs-to-bq'
+###
+name: MTG ELT flow v2
+description: The main ETL function which will automate the string of tasks
+version: 093c292abd550633b9ad1a911edbc80b
+# The work queue that will handle this deployment's runs
+work_queue_name: default
+tags: []
+parameters: {"bulk_data_url":"https://api.scryfall.com/bulk-data/oracle-cards"}
+schedule: null
+infra_overrides: {}
+infrastructure:
+  type: process
+  env: {}
+  labels: {}
+  name: null
+  command: null
+  stream_output: true
+  working_dir: null
+  block_type_slug: process
+  _block_type_slug: process
+
+###
+### DO NOT EDIT BELOW THIS LINE
+###
+flow_name: etl-api-to-gcs-to-bq
+manifest_path: null
+storage: null
+path: /home/parker/MTG_Data_Engineering_Bootcamp/prefect
+entrypoint: prefect_deployable_file.py:etl_api_to_gcs_to_bq
+parameter_openapi_schema:
+  title: Parameters
+  type: object
+  properties:
+    bulk_data_url:
+      title: bulk_data_url
+      position: 0
+  required:
+  - bulk_data_url
+  definitions: null
