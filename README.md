@@ -13,37 +13,58 @@ Anaconda
 dbt cloud account
 prefect (installed through pip install requirements.txt)
 
-
-
 My suggestion is that you follow this helpful video which will walk you through the creation of a VM. The video will also walk you through installing anaconda which is used here (watch everything up until 16:35 timestamp).
 VM creation Video: https://youtu.be/ae-CV2KfoN0
 
 
 ## Initial Setup: 
-So at this point I am assuming that you have a working environment with Anaconda 3 installed and initialized. Next you will need to copy the project repository to your working environment.
+So at this point I am assuming that you have a working environment with Anaconda 3 installed and initialized. 
+
+Next you will need to copy the project repository to your working environment.
 
 via the command line, you can run:
 git clone https://github.com/PWSampanis/MTG_Data_Engineering_Bootcamp.git
 
-I would then use the terminal to go into the MTG_Data_Engineering bootcamp and into the Prefect folder.
+I would then use the terminal to go into the MTG_Data_Engineering bootcamp folder.
 
 linux VM command:
-cd MTG_Data_Engineering_Bootcamp/prefect
+cd MTG_Data_Engineering_Bootcamp/
 
-From here, you can run pip install 
+You will now likely want to create a conda environment where you will install the requirements. I have saved my conda environment if you would like to replicate it. 
+
+Anaconda Command:
+conda env create -f environment.yml
+
+Alternatively, I have exported my packages in a pip-friendly requirements.txt file if you have python but not anaconda.
+Python (not Anaconda) Command:
+pip install requirements.txt
+
+The above command (depending on anaconda or pip) should allow you to install the prefect and google packages which we will require.
+
+Personal note: my anaconda version info is as follows...
+conda version : 22.11.1
+conda-build version : 3.22.0
+python version : 3.9.13.final.0
+
+
+## Pipeline
+
+We have two different ways to run this pipeline. The first option is to run the python file from the terminal. The second method would be to create a prefect deployment and then initiate a run job (the deployment method allows us to schedule the pipeline).
+
+Either way, you will want to make sure you are in your conda environment so you have prefect installed. 
+
+Commands:
+conda activate zoomcamp (my personal environment)
+prefect orion start
+- When you start orion it should provide a link to the dashboard (Check out the dashboard at http://##.#.#.#:##)
+Use the link to launch the dashboard. You will want to 
+
+I then create a separate terminal (using VSCode) and run:
+cd MTG_Data_Engineering_Bootcamp/prefect/ (if you are not already in this sub folder)
 
 
 
-
-
-
-
-
-
-
-
-
-When using prefect, you run the command *?prefect orion start?* to start up the web application and see progress of jobs. 
+## Pipeline Option 1: Run Python File (Manual)
 
 to be able to use blocks in your code you need to run this from the cli:
 - prefect block register -m prefect_gcp
@@ -52,9 +73,7 @@ If I do a DBT external table I would need to use the dbt external_tables package
 - The user would need to run dbt deps to be able to initialize the repo
 
 ## Infrastructure setup:
-- 2 service accounts - dbt and prefect (could you use one for both?)
 
-- GCS bucket creation, bigquery dataset creation (I think dbt external table will build the table). It will all rely on the autodetect schema though unless I build the schema into the dbt external table?
 
 
 commands I'm running when I restart my vm:
